@@ -16,19 +16,23 @@ function tableFor(evt) {
 }
 
 function analyze(min = 0) {
-  return [...EVENTS]
-    .map(e => ({ evt: e, cor: phi(tableFor(e)) }))
-    .filter(x => Math.abs(x.cor) > min)
-    .map(x => x.evt + ": " + x.cor.toFixed(4))
-  /*
+  let n;
   let a = [];
   for (let e of EVENTS) {
     let cor = phi(tableFor(e));
-    if (Math.abs(cor) > min)
-      a.push(e+": "+cor.toFixed(4))
+    //if (Math.abs(cor) > min) {
+      n = 0;
+      for (let entry of JOURNAL) {
+        if (entry.events.includes(e)) {
+          n+=1;
+        }
+      }
+      a.push(e + ":      " +"      Correlation :  " 
+      +  cor.toFixed(4) + 
+      "       Count of entry : " + n);
+    //}
   }
   return a
-  */
 }
 
 function journalEvents() {
@@ -43,14 +47,14 @@ function myrange(start, end, step = 1) {
   let array = []
   if (step == 0) return 0
 
-  let max = Math.max(start,end)
-  let min = Math.min(start,end)
+  let max = Math.max(start, end)
+  let min = Math.min(start, end)
 
   if (step > 0) {
     for (let i = min; i <= max; i += step) {
       array.push(i)
     }
-  }else{
+  } else {
     for (let i = max; i >= min; i += step) {
       array.push(i)
     }
@@ -62,7 +66,7 @@ function mysum(arr) {
   let counter = 0;
   for (let i = 0; i < arr.length; i++) {
     if (Number.isInteger(arr[i])) {
-      count += arr[i]
+      counter += arr[i];
     } else {
       return "summation is not possible";
     }
