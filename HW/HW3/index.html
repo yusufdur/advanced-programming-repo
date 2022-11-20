@@ -3,35 +3,70 @@
 <html>
 
 <head>
-    <title>JavaScript Sprite Animation Tutorial</title>
+    <title>Fetch And Animations</title>
 
     <style>
-        #general {
+        div :not(#buttons){
             align-items: center;
             float: left;
             clear: left;
+        }
+        #buttons {
+            align-items: center;
+            float: left;
+            clear: left;
+            border-width: 2px;
+            border-style: solid;
+            border-color: black;
+            display: flex;
+            justify-content: space-between;
+            margin: 0px auto;
+            background: lightgrey;
+            padding: 10px;
+        }
+
+        button:not(#runBackward) , p{
+            margin-right: 40px;
+        }
+
+        button {
+            padding: 10px 20px 10px 20px;
+            background-color: lightgoldenrodyellow;
+        }
+        button:hover:not(:disabled){
+            font-weight: bold;
+            opacity: 0.8;
         }
 
         #canvas,
         #canvas2 {
             float: left;
             clear: left;
+            border-width: 2px;
+            border-style: solid;
+            border-color: black;
+            margin-bottom: 10px;
         }
     </style>
 </head>
 
 <body>
-    <canvas id='canvas'></canvas>
     <div id="general">
-        <button onclick='startOver()'>Start Over</button>
-        <button onclick='moveLeft()'>Left</button>
-        <button onclick='moveRight()'>Right</button>
-        <button id='pause'>Pause</button>
-        <button id='next' disabled="true">Next</button>
-        <button id='prev' disabled="true">Prev</button>
-        <button id="runBackward">Run Backward</button>
+        <h2 id="state">Running ...</h2>
+        <canvas id='canvas'></canvas>
+        <div id="buttons">
+            <button id="startOver"> Start Over </button>
+            <button id="moveLeft"> Left </button>
+            <button id="moveRight"> Right </button>
+            <button id='pause'> Pause</button>
+            <button id='next' disabled="true"> Next </button>
+            <button id='prev' disabled="true"> Prev </button>
+            <button id="runBackward"> Run Backward </button>
+        </div>
+        <h2>Next,Prev Moves</h2>
+        <canvas id='canvas2'></canvas>
     </div>
-    <canvas id='canvas2'></canvas>
+
 
 
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
@@ -84,7 +119,8 @@
         var character = new Image();
 
         // taking image with fetch from github
-        const imageUrl = "https://raw.githubusercontent.com/yusuf-dur/advanced-programming-2022/main/HW/HW3/img/character.png?token=GHSAT0AAAAAAB3NO5KHGL2YPICJTKRLPYUKY32EMTQ";
+
+        const imageUrl = "https://raw.githubusercontent.com/yusuf-dur/advanced-programming-2022/main/HW/HW3/img/character.jpg?token=GHSAT0AAAAAAB3NO5KHQIXRDWY23LAUYQ22Y32G2QA";
         fetch(imageUrl)
             .then(response => response.blob())
             .then(imageBlob => {
@@ -131,31 +167,33 @@
         }
 
 
-        function moveLeft() {
+        $('#moveLeft').on('click', function () {
             left = true;
             right = false;
-        }
+        });
 
-        function moveRight() {
+        $('#moveRight').on('click', function () {
             left = false;
             right = true;
-        }
+        });
 
-        function startOver() {
+        $('#starOver').on('click', function () {
             location.reload()
-        }
+        });
 
         // pause the animation on #pause click
-        $('#pause').on('click', function () {
+        $('#pause').on('click', async function () {
             pauseCount++
             if (pauseCount % 2 == 1) {
                 paused = true
                 $('#next').removeAttr('disabled');
                 $('#prev').removeAttr('disabled');
+                document.getElementById("state").textContent = "Paused !"
             } else {
                 paused = false
                 $('#next').attr('disabled', 'true');
                 $('#prev').attr('disabled', 'true');
+                if (isRunningBackward ? document.getElementById("state").textContent =  "Running backward !" : document.getElementById("state").textContent =  "Running ..." );
             };
         });
 
@@ -166,21 +204,23 @@
                 isRunningBackward = true;
                 trackRight = 1
                 trackLeft = 0
+                if (paused ? document.getElementById("state").textContent =  "Paused !" : document.getElementById("state").textContent =  "Running Backward !" );
             } else {
                 isRunningBackward = false;
                 trackRight = 0
                 trackLeft = 1
+                if (paused ? document.getElementById("state").textContent =  "Paused !" : document.getElementById("state").textContent =  "Running ..." );
             }
         });
 
         $('#next').on('click', function () {
             ctx2.clearRect(0, 0, canvas.width, canvas.height);
-            if (isRunningBackward ? srcX2 = (curFrame - 1) * width : srcX2 = (curFrame + 1) * width);
+            if (isRunningBackward ? srcX2 = ((curFrame - 1) % frameCount) * width : srcX2 = ((curFrame + 1) % frameCount) * width);
             ctx2.drawImage(character, srcX2, srcY, width, height, x, y, width, height);
         });
         $('#prev').on('click', function () {
             ctx2.clearRect(0, 0, canvas.width, canvas.height);
-            if (isRunningBackward ? srcX2 = (curFrame + 1) * width : srcX2 = (curFrame - 1) * width);
+            if (isRunningBackward ? srcX2 = ((curFrame + 1) % frameCount) * width : srcX2 = ((curFrame - 1) % frameCount) * width);
             ctx2.drawImage(character, srcX2, srcY, width, height, x, y, width, height);
         });
 
