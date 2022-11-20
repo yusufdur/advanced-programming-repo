@@ -122,9 +122,9 @@
         var ctx = canvas.getContext("2d");
         var character = new Image();
 
-        //character.src = "character.png"
+        character.src = "character.png"
 
-        const imageUrl = "https://raw.githubusercontent.com/yusuf-dur/advanced-programming-2022/main/HW/HW3/character.png?token=GHSAT0AAAAAAB3NUEQ4RJWSLAMUGEPWTFU4Y32KOXA";
+        // const imageUrl = "https://raw.githubusercontent.com/yusuf-dur/advanced-programming-2022/main/HW/HW3/character.png?token=GHSAT0AAAAAAB3NUEQ4RJWSLAMUGEPWTFU4Y32KOXA";
         fetch(imageUrl)
             .then(response => response.blob())
             .then(imageBlob => {
@@ -132,7 +132,7 @@
                 const imageObjectURL = URL.createObjectURL(imageBlob);
                 // set image.src
 
-                character.src = imageObjectURL
+                //character.src = imageObjectURL
             });
 
 
