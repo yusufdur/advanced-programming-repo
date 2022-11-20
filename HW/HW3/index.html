@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <title>JavaScript Sprite Animation Tutorial</title>
+
+    <style>
+        #general {
+            align-items: center;
+            float: left;
+            clear: left;
+        }
+
+        #canvas,
+        #canvas2 {
+            float: left;
+            clear: left;
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id='canvas'></canvas>
+    <div id="general">
+        <button onclick='startOver()'>Start Over</button>
+        <button onclick='moveLeft()'>Left</button>
+        <button onclick='moveRight()'>Right</button>
+        <button id='pause'>Pause</button>
+        <button id='next' disabled="true">Next</button>
+        <button id='prev' disabled="true">Prev</button>
+        <button id="runBackward">Run Backward</button>
+    </div>
+    <canvas id='canvas2'></canvas>
+
+
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+    <script>
+
+        const spriteWidth = 864;
+        const spriteHeight = 280;
+
+        const canvasWidth = 1000;
+        const canvasHeight = 300;
+        const rows = 2;
+        const cols = 8;
+        const width = spriteWidth / cols;
+        const height = spriteHeight / rows;
+
+        var trackRight = 0;
+        var trackLeft = 1;
+
+
+        var curFrame = 0;
+        var frameCount = 8;
+
+        var x = -120;
+        var y = 150;
+
+        var srcX;
+        var srcX2;
+        var srcY;
+
+        //pause
+        var paused = false;
+        var pauseCount = 0;
+
+        // run backward
+        var runBackwardCount = 1;
+        var isRunningBackward;
+
+        // left or right
+        var left = false;
+        var right = true;
+
+        // speed
+        var speed = 20;
+
+        // canvas 1 
+        var canvas = document.getElementById('canvas');
+        canvas.width = canvasWidth;
+        canvas.height = canvasHeight;
+        var ctx = canvas.getContext("2d");
+        var character = new Image();
+        character.src = "img/character.png";
+
+        // canvas 2 
+        var canvas2 = document.getElementById('canvas2');
+        canvas2.width = canvasWidth;
+        canvas2.height = canvasHeight;
+        var ctx2 = canvas2.getContext("2d");
+
+        function updateFrame() {
+            curFrame = ++curFrame % frameCount;
+            srcX = curFrame * width;
+            ctx.clearRect(x, y, width, height);
+
+            let fazlalık = 100
+
+            if (right && x == (canvasWidth - fazlalık)) x = -fazlalık
+            if (left && x == -fazlalık) x = canvasWidth
+
+            if (left && x > -fazlalık) {
+                srcY = trackLeft * height;
+                x -= speed;
+            }
+            if (right && x < canvasWidth) {
+                srcY = (trackRight * height);
+                x += speed;
+            }
+
+        }
+
+        function draw() {
+            if (!paused) {
+                updateFrame();
+                ctx.drawImage(character, srcX, srcY, width, height, x, y, width, height);
+            }
+        }
+
+
+        function moveLeft() {
+            left = true;
+            right = false;
+        }
+
+        function moveRight() {
+            left = false;
+            right = true;
+        }
+
+        function startOver() {
+            location.reload()
+        }
+
+        // pause the animation on #pause click
+        $('#pause').on('click', function () {
+            pauseCount++
+            if (pauseCount % 2 == 1) {
+                paused = true
+                $('#next').removeAttr('disabled');
+                $('#prev').removeAttr('disabled');
+            } else {
+                paused = false
+                $('#next').attr('disabled', 'true');
+                $('#prev').attr('disabled', 'true');
+            };
+        });
+
+        //run backward
+        $('#runBackward').on('click', function () {
+            runBackwardCount++
+            if (runBackwardCount % 2 == 0) {
+                isRunningBackward = true;
+                trackRight = 1
+                trackLeft = 0
+            } else {
+                isRunningBackward = false;
+                trackRight = 0
+                trackLeft = 1
+            }
+        });
+
+        $('#next').on('click', function () {
+            ctx2.clearRect(0, 0, canvas.width, canvas.height);
+            if (isRunningBackward ? srcX2 = (curFrame - 1) * width : srcX2 = (curFrame + 1) * width);
+            ctx2.drawImage(character, srcX2, srcY, width, height, x, y, width, height);
+        });
+        $('#prev').on('click', function () {
+            ctx2.clearRect(0, 0, canvas.width, canvas.height);
+            if (isRunningBackward ? srcX2 = (curFrame + 1) * width : srcX2 = (curFrame - 1) * width);
+            ctx2.drawImage(character, srcX2, srcY, width, height, x, y, width, height);
+        });
+
+
+        // main code
+        setInterval(draw, 100);
+
+    </script>
+</body>
+
+</html>
