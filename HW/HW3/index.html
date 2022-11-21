@@ -41,8 +41,7 @@
             opacity: 0.8;
         }
 
-        #canvas,
-        #canvas2 {
+        #canvas {
             float: left;
             clear: left;
             border-width: 2px;
@@ -66,8 +65,6 @@
             <button id='prev' disabled="true" onclick="prev()"> Prev </button>
             <button id="runBackward" onclick="runBackward()"> Run Backward </button>
         </div>
-        <h2>Next,Prev Moves</h2>
-        <canvas id='canvas2'></canvas>
     </div>
 
 
@@ -78,7 +75,6 @@
 
         const spriteWidth = 864;
         const spriteHeight = 280;
-
         const canvasWidth = 1000;
         const canvasHeight = 300;
         const rows = 2;
@@ -97,7 +93,6 @@
         var y = 150;
 
         var srcX;
-        var srcX2;
         var srcY;
 
         //pause
@@ -122,30 +117,26 @@
         var ctx = canvas.getContext("2d");
         var character = new Image();
 
-        character.src = "character.jpg"
+        //character.src = "character.jpg"
 
-        // // const imageUrl = "https://raw.githubusercontent.com/yusuf-dur/advanced-programming-2022/main/HW/HW3/character.png?token=GHSAT0AAAAAAB3NUEQ4RJWSLAMUGEPWTFU4Y32KOXA";
-        // fetch(imageUrl)
-        //     .then(response => response.blob())
-        //     .then(imageBlob => {
-        //         // Then create a local URL for that image and print it 
-        //         const imageObjectURL = URL.createObjectURL(imageBlob);
-        //         // set image.src
+        const imageUrl = "https://yusuf-dur.github.io/advanced-programming-2022/HW/HW3/character.jpg";
+        fetch(imageUrl)
+            .then(response => response.blob())
+            .then(imageBlob => {
+                // Then create a local URL for that image and print it 
+                const imageObjectURL = URL.createObjectURL(imageBlob);
+                // set image.src
 
-        //         //character.src = imageObjectURL
-        //     });
+                character.src = imageObjectURL
+            });
 
-
-
-        // canvas 2 
-        var canvas2 = document.getElementById('canvas2');
-        canvas2.width = canvasWidth;
-        canvas2.height = canvasHeight;
-        var ctx2 = canvas2.getContext("2d");
 
         function updateFrame() {
+
             curFrame = ++curFrame % frameCount;
+            console.log(curFrame);
             srcX = curFrame * width;
+            console.log(srcX)
             ctx.clearRect(x, y, width, height);
 
             let fazlalık = 100
@@ -164,6 +155,29 @@
 
         }
 
+        function prev_updateFrame() { 
+
+            if (curFrame != 0 ? curFrame = --curFrame : curFrame = frameCount - 1) // bug
+            console.log(curFrame);
+            srcX = (curFrame * width);
+            console.log(srcX)
+            ctx.clearRect(x, y, width, height);
+
+            let fazlalık = 100
+
+            if (right && x == (canvasWidth - fazlalık)) x = -fazlalık
+            if (left && x == -fazlalık) x = canvasWidth
+
+            if (left && x > -fazlalık) {
+                srcY = trackLeft * height;
+                x += speed;
+            }
+            if (right && x < canvasWidth) {
+                srcY = (trackRight * height);
+                x -= speed;
+            }
+
+        }
         function draw() {
             if (!paused) {
                 updateFrame();
@@ -237,7 +251,6 @@
             left = true;
             right = false;
         }
-
         function moveRight() {
             left = false;
             right = true;
@@ -258,8 +271,8 @@
                 paused = false
                 // $('#next').attr('disabled', 'true');
                 // $('#prev').attr('disabled', 'true');
-                document.getElementById("next").setAttribute("disabled" , true)
-                document.getElementById("prev").setAttribute("disabled" , true)
+                document.getElementById("next").setAttribute("disabled", true)
+                document.getElementById("prev").setAttribute("disabled", true)
                 if (isRunningBackward ? document.getElementById("state").textContent = "Running backward !" : document.getElementById("state").textContent = "Running ...");
             };
         }
@@ -278,14 +291,23 @@
             }
         }
         function prev() {
-            ctx2.clearRect(0, 0, canvas.width, canvas.height);
-            if (isRunningBackward ? srcX2 = ((curFrame + 1) % frameCount) * width : srcX2 = ((curFrame - 1) % frameCount) * width);
-            ctx2.drawImage(character, srcX2, srcY, width, height, x, y, width, height);
+            // ctx2.clearRect(0, 0, canvas.width, canvas.height);
+            // if (isRunningBackward ? srcX2 = ((curFrame + 1) % frameCount) * width : srcX2 = ((curFrame - 1) % frameCount) * width);
+            // ctx2.drawImage(character, srcX2, srcY, width, height, x, y, width, height);
+            // ctx.clearRect(0, 0, canvas.width, canvas.height);
+            // if (isRunningBackward ? srcX = ((curFrame + 1) % frameCount) * width : srcX = ((curFrame - 1) % frameCount) * width);
+            // ctx2.drawImage(character, srcX, srcY, width, height, x, y, width, height);
+            
+            prev_updateFrame();
+            ctx.drawImage(character, srcX, srcY, width, height, x, y, width, height);
         }
         function next() {
-            ctx2.clearRect(0, 0, canvas.width, canvas.height);
-            if (isRunningBackward ? srcX2 = ((curFrame - 1) % frameCount) * width : srcX2 = ((curFrame + 1) % frameCount) * width);
-            ctx2.drawImage(character, srcX2, srcY, width, height, x, y, width, height);
+            // ctx2.clearRect(0, 0, canvas.width, canvas.height);
+            // if (isRunningBackward ? srcX2 = ((curFrame - 1) % frameCount) * width : srcX2 = ((curFrame + 1) % frameCount) * width);
+            // ctx2.drawImage(character, srcX2, srcY, width, height, x, y, width, height);
+
+            updateFrame();
+            ctx.drawImage(character, srcX, srcY, width, height, x, y, width, height);
         }
 
 
