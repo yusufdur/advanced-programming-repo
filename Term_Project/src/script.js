@@ -72,6 +72,8 @@ const generateWord = (optionValue) => {
   letterContainer.classList.remove("hide");
   userInputSection.innerText = "";
   let optionArray = options[optionValue]
+
+  console.log("optionarray" ,optionArray);
   //choose random word
   chosenWord = optionArray[Math.floor(Math.random() * optionArray.length)];
   chosenWord = chosenWord.toUpperCase();
